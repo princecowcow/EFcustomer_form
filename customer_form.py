@@ -69,18 +69,25 @@ def main():
     if st.session_state.get("cf_text"):
         txt = st.session_state["cf_text"]
         st.code(txt, language="text")
-        if st.button("📲 一鍵複製文字", key="cf_wechat"):
-            import json as _json
-            import streamlit.components.v1 as _components
-            _payload = _json.dumps(txt, ensure_ascii=False)
-            _components.html(
-            "<script>const s=" + _payload + ";"
-            "function _cp(){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s);}"
-            "else{const ta=document.createElement('textarea');ta.value=s;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}}"
-            "_cp();document.body.innerHTML='<p><p>✅ 已複製，係微信比番我地就得</p>';"
-            "</script>",
-                height=60)
-            st.caption("✅ 已複製，係微信比番我地就得")
+        import json as _json
+        import streamlit.components.v1 as _components
+        _payload = _json.dumps(txt, ensure_ascii=False)
+        _btn_html = (
+            '<div style="text-align:center;padding:4px">'
+            '<button id="cpb" onclick="_docp()" style="background:#ff4b4b;color:#fff;border:none;'
+            'border-radius:8px;padding:10px 22px;font-size:16px;cursor:pointer">📲 一鍵複製文字</button>'
+            '<p id="cpm" style="display:none;color:#0a8a3a;font-weight:600;margin:8px 0 0">✅ 已複製，係微信比番我地就得</p>'
+            '</div>'
+            '<script>const S=' + _payload + ';'
+            'function _docp(){var ta=document.createElement("textarea");ta.value=S;'
+            'ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);'
+            'ta.focus();ta.select();var ok=false;try{ok=document.execCommand("copy");}catch(e){}'
+            'document.body.removeChild(ta);'
+            'if(navigator.clipboard&&navigator.clipboard.writeText){try{navigator.clipboard.writeText(S);}catch(e){}}'
+            'document.getElementById("cpm").style.display="block";'
+            'document.getElementById("cpb").textContent=ok?"✅ 已複製":"❌ 複製唔到，請長按上面文字手動copy";}'
+            '</script>')
+        _components.html(_btn_html, height=100)
 
 
 if __name__ == "__main__":
