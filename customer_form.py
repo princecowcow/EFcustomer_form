@@ -12,7 +12,7 @@ INOUT_OPTIONS = ["收貨", "送貨", "自提", "提貨", "轉倉(收)", "轉倉(
 
 
 def main():
-    st.set_page_config(page_title="信杰電子 · 客戶填單", layout="wide")
+    st.set_page_config(page_title="信杰電子 · 客戶填單", page_icon="icon.png", layout="wide")
     st.title("📋 信杰電子 · 客戶填單")
     st.divider()
 
@@ -65,6 +65,14 @@ def main():
             if m["awb"]:
                 lines.append(f"K. 入倉号/AWB :{m['awb']}")
         st.session_state["cf_text"] = "\n".join(lines)
+
+    st.divider()
+    if st.button("🔄 重填（清空表格，唔使 F5）", key="cf_reset"):
+        for k in list(st.session_state.keys()):
+            if k.startswith("cf_"):
+                del st.session_state[k]
+        st.session_state["cf_models"] = [{"mpn": "", "qty": "", "remark": "", "awb": ""}]
+        st.rerun()
 
     if st.session_state.get("cf_text"):
         txt = st.session_state["cf_text"]
